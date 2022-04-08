@@ -1,21 +1,13 @@
 #!/bin/bash
 
-#pocet cisel bud zadam nebo 10 :)
-if [ $# -lt 1 ];then 
-    numbers=10;
-else
-    numbers=$1;
-fi;
+# generate 8 numbers into file 'numbers'
+dd if=/dev/random bs=1 count=8 of=numbers 2> /dev/null
 
-#preklad cpp zdrojaku
-mpic++ --prefix /usr/local/share/OpenMPI -o oems oems.cpp
+# compile project
+#mpic++ --prefix /usr/local/share/OpenMPI -o oems oems.cpp
 
+# run ptoject
+#mpirun --prefix /usr/local/share/OpenMPI -np $numbers oems
 
-#vyrobeni souboru s random cisly
-dd if=/dev/random bs=1 count=$numbers of=numbers
-
-#spusteni
-mpirun --prefix /usr/local/share/OpenMPI -np $numbers oems
-
-#uklid
+# clean
 rm -f oems numbers
