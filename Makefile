@@ -1,7 +1,8 @@
 #  File    Makefile
-#  Author  Tomas Beranek <xberan46@stud.fit.vutbr.cz>
-#  Date    1.3.2022
-#  Up2date sources can be found at: https://github.com/TomasBeranek/but-flp-project-1
+# Author  Tomas Beranek <xberan46@stud.fit.vutbr.cz>
+# Brief   A simple SW implementation of Odd-even merge sort using OpenMPI
+# Date    9.4.2022
+# Up2date sources can be found at: https://github.com/TomasBeranek/but-prl-project-1
 
 all: run
 
