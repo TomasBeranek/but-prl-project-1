@@ -113,7 +113,10 @@ int main(int argc,char *argv[]){
 
     // print the result
     for (int i = 0; i < 8; i++){
-      printf("%d\n", numbers[i]);
+      if (i == 7)
+        printf("%d", numbers[i]);
+      else
+        printf("%d\n", numbers[i]);
     }
 
   } else { // workers code
@@ -131,7 +134,7 @@ int main(int argc,char *argv[]){
     if (min > max)
       swap(&min, &max);
 
-    // send sorted the pair to the next processes
+    // send the sorted pair to the next processes
     MPI_Isend_safe(&min, 1, MPI_INT, min_out[rank], 1, MPI_COMM_WORLD, NULL);
     MPI_Isend_safe(&max, 1, MPI_INT, max_out[rank], 2, MPI_COMM_WORLD, NULL);
   }
