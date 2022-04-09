@@ -1,3 +1,10 @@
+/* File    oems.c
+ * Author  Tomas Beranek <xberan46@stud.fit.vutbr.cz>
+ * Brief   A simple SW implementation of Odd-even merge sort using OpenMPI
+ * Date    9.4.2022
+ * Up2date sources can be found at: https://github.com/TomasBeranek/but-prl-project-1
+ */
+
 #include "mpi.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -7,9 +14,10 @@ void MPI_Isend_safe(  const void *buf,
                       MPI_Datatype datatype,
                       int dest,
                       int tag,
-                      MPI_Comm comm) {
-  MPI_Request request;
-  int ierr = MPI_Isend(buf, count, datatype, dest, tag, comm, &request);
+                      MPI_Comm comm,
+                      MPI_Request* request) {
+  MPI_Request req;
+  int ierr = MPI_Isend(buf, count, datatype, dest, tag, comm, &req);
 
   if (ierr != MPI_SUCCESS){
     fprintf(stderr, "ERROR: MPI_Isend failed with error %d!\n", ierr);
@@ -51,6 +59,8 @@ void swap(int* a, int* b){
 
 int main(int argc,char *argv[]){
   int rank, size;
+
+  // specify connections to simulate HW wires
   int min_out[20] = {-1, 5, 5, 7, 7, 11, 9, 11, 10, 13, 13, 0, 15, 17, 16, 17, 18, 0, 0, 0};
   int max_out[20] = {-1, 6, 6, 8, 8, 9, 14, 10, 14, 12, 12, 15, 19, 16, 0, 18, 19, 0, 0, 0};
 
@@ -85,8 +95,8 @@ int main(int argc,char *argv[]){
 
     // send numbers to the first layer of processes
     for (int proc_rank = 1; proc_rank <= 4; proc_rank++){
-        MPI_Isend_safe(numbers + proc_rank*2 - 2, 1, MPI_INT, proc_rank, 0, MPI_COMM_WORLD);
-        MPI_Isend_safe(numbers + proc_rank*2 - 1, 1, MPI_INT, proc_rank, 0, MPI_COMM_WORLD);
+        MPI_Isend_safe(numbers + proc_rank*2 - 2, 1, MPI_INT, proc_rank, 0, MPI_COMM_WORLD, NULL);
+        MPI_Isend_safe(numbers + proc_rank*2 - 1, 1, MPI_INT, proc_rank, 0, MPI_COMM_WORLD, NULL);
     }
 
     // load the result
@@ -111,6 +121,7 @@ int main(int argc,char *argv[]){
     MPI_Status* array_of_statuses = (MPI_Status*)malloc(sizeof(MPI_Status)*2);
     int min, max;
 
+    // load input
     MPI_Irecv_safe(&min, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, array_of_requests);
     MPI_Irecv_safe(&max, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, array_of_requests + 1);
 
@@ -120,8 +131,9 @@ int main(int argc,char *argv[]){
     if (min > max)
       swap(&min, &max);
 
-    MPI_Isend_safe(&min, 1, MPI_INT, min_out[rank], 1, MPI_COMM_WORLD);
-    MPI_Isend_safe(&max, 1, MPI_INT, max_out[rank], 2, MPI_COMM_WORLD);
+    // send sorted the pair to the next processes
+    MPI_Isend_safe(&min, 1, MPI_INT, min_out[rank], 1, MPI_COMM_WORLD, NULL);
+    MPI_Isend_safe(&max, 1, MPI_INT, max_out[rank], 2, MPI_COMM_WORLD, NULL);
   }
 
   MPI_Finalize();
