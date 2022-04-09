@@ -4,10 +4,10 @@
 dd if=/dev/random bs=1 count=8 of=numbers 2> /dev/null
 
 # compile project
-#mpic++ --prefix /usr/local/share/OpenMPI -o oems oems.cpp
+mpicc --prefix /usr/local/share/OpenMPI -o oems oems.c
 
-# run ptoject
-#mpirun --prefix /usr/local/share/OpenMPI -np $numbers oems
+# run project
+mpirun --prefix /usr/local/share/OpenMPI -oversubscribe -np 20 oems
 
 # clean
 rm -f oems numbers
