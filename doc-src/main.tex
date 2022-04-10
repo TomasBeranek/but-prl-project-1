@@ -118,7 +118,7 @@ Cenu vypočítáme z časové a prostorové složitosti následovně:
 
 Je jasné, že cena \textbf{není optimální}. To lze poznat už z obrázku \ref{diagram}, protože každý "worker" procesor učiní pouze jediné porovnání a zbytek času je neaktivní.
 
-\subsection{Implementace}
+\section{Implementace}
 Jelikož se jedná o HW řadící algoritmus bylo nutné simulovat procesory pomocí procesů. Toto ovšem není ideální, protože všechny určitě nepoběží zároveň, tak jak by tomu bylo při HW obvodu. Fyzické propojení procesorů je nahrazeno zasíláním asynchronních zpráv mezi procesy. 
 
 Schéma zapojení/komunikace je znázorněno na obrázku \ref{diagram}. Čísla značí rank procesů a šipky značí směr komunikace. Každá šipka znázorňuje přenos jediné hodnoty. Propojení jsou napevno specifikována poli \texttt{min\_out} a \texttt{max\_out}, která jsou přístupná všem procesům a ty si z nich vybírají informace, kam výsledky poslat na základě svého ranku (použitého jako index). Odesílání minimální/maximální hodnoty je znázorněno šipkou z pravého horního/dolního rohu procesu.
@@ -127,7 +127,7 @@ Oproti HW zapojení SW implementace obsahuje navíc proces s rank 0 (master), kt
 
 Každý worker proces čeká na dvě příchozí asynchronní zprávy. Jelikož je zapojení pevně dáno, nemůže se stát, že dostane jiný počet zpráv nebo od nesprávného procesu. Po obdržení zpráv jsou hodnoty porovnány a opět asnychronně poslány dále.
 
-\subsection{Závěr}
+\section{Závěr}
 Odd-even merge sort pracuje s pevným počtem procesorů, který je dán velikostí vstupu. Jelikož ze zadání byla velikost vstupu zafixována na 8, tak nemá implementace žádnou proměnlivou strukturu. Vyhodocení pro různé nastavení tudíž nedává smysl. 
 
 Rovněž nemá smysl měřit výkonost algoritmu, protože se jedná o SW simulaci HW obvodu, jehož jedinou funkční části by mělo být porovnávání hodnot. Nicméně režie na vytváření, přepínání a komunikaci mezi procesy velmi převýší čas ztrávený porovnáváním hodnot (troufám si odhadovat, že 99,99 \% připadne režii procesů). 
